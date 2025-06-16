@@ -39,12 +39,12 @@
 
 1. Get microservices example running locally using `docker-compose`
 
-1. Create working example of microservices on AWS using [ECS Service Connect](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-connect.html)
+1. Create working example of microservices on AWS using [ECS Service Connect](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs.html)
 
    - will not be production ready
    - will rely on a lot of default values provided by AWS, with no networking setup by us
 
-1. Create production-ready example of microservices on AWS using [ECS Service Connect](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-connect.html)
+1. Create production-ready example of microservices on AWS using [ECS Service Connect](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs.html)
 
    - configure networking setup and apply that to ECS components
 

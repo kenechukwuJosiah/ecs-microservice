@@ -21,7 +21,7 @@ def hello() -> str:
 def get_message() -> str:
     ''' endpoint to test AWS ECS Service Connect functionality across services '''
     # url = f'http://flask_app_2:{os.environ["PORT_FLASK_APP_2"]}/return_message'  # local testing with docker-compose
-    url = f'http://service-connect-demo-service-2:{os.environ["PORT_FLASK_APP_2"]}/return_message'
+    url = f'http://ecs-demo-service-2:{os.environ["PORT_FLASK_APP_2"]}/return_message'
     print(f'trying url: {url}')
     message = requests.get(url, timeout=10)
 
@@ -32,7 +32,7 @@ def get_message() -> str:
 def get_message_across_cluster() -> str:
     ''' endpoint to test AWS ECS Service Connect functionality across clusters '''
     # url = f'http://flask_app_3:{os.environ["PORT_FLASK_APP_3"]}/return_message'  # local testing with docker-compose
-    url = f'http://service-connect-demo-service-3:{os.environ["PORT_FLASK_APP_3"]}/return_message'
+    url = f'http://ecs-demo-service-3:{os.environ["PORT_FLASK_APP_3"]}/return_message'
     print(f'trying url: {url}')
     message = requests.get(url, timeout=10)
 
