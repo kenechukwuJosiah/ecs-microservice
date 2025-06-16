@@ -29,8 +29,8 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@main
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-deploy-image
+      - name: Build, tag, and push image to Amazon ECR (sha tag)
+        id: build-deploy-image-sha
         uses: whoan/docker-build-with-cache-action@master
         with:
           username: "${{ env.AWS_ACCESS_KEY_ID }}"
@@ -38,4 +38,15 @@ jobs:
           registry: ${{ steps.login-ecr.outputs.registry }}
           image_name: ${{ env.AWS_ECR_REPOSITORY_NAME }}
           image_tag: ${{ env.IMAGE_TAG }}
+          push_image_and_stages: true
+
+      - name: Build, tag, and push image to Amazon ECR (latest tag)
+        id: build-deploy-image-latest
+        uses: whoan/docker-build-with-cache-action@master
+        with:
+          username: "${{ env.AWS_ACCESS_KEY_ID }}"
+          password: "${{ env.AWS_SECRET_ACCESS_KEY }}"
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          image_name: ${{ env.AWS_ECR_REPOSITORY_NAME }}
+          image_tag: latest
           push_image_and_stages: true
