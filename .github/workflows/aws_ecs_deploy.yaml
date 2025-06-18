@@ -55,7 +55,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@master
         with:
-          task-definition: ecs-demo-task-def-1.json
+          task-definition: ${{ env.AWS_ECS_TASK_DEFINITION_1 }}.json
           container-name: ${{ env.AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_1 }}
           image: ${{ steps.login-ecr.outputs.registry }}/${{ env.AWS_ECR_REPOSITORY_NAME }}:${{ env.IMAGE_TAG }}
 
@@ -100,7 +100,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@master
         with:
-          task-definition: ecs-demo-task-def-2.json
+          task-definition: ${{ env.AWS_ECS_TASK_DEFINITION_2 }}.json
           container-name: ${{ env.AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_2 }}
           image: ${{ steps.login-ecr.outputs.registry }}/${{ env.AWS_ECR_REPOSITORY_NAME }}:${{ env.IMAGE_TAG }}
 
@@ -145,7 +145,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@master
         with:
-          task-definition: ecs-demo-task-def-3.json
+          task-definition: ${{ env.AWS_ECS_TASK_DEFINITION_3 }}.json
           container-name: ${{ env.AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_3 }}
           image: ${{ steps.login-ecr.outputs.registry }}/${{ env.AWS_ECR_REPOSITORY_NAME }}:${{ env.IMAGE_TAG }}
 
