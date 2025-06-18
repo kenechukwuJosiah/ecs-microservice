@@ -1,0 +1,158 @@
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [stage, prod]
+
+name: AWS ECS Deploy
+
+env:
+  AWS_ECR_REPOSITORY_NAME: ecs-demo-ecr
+  AWS_ECS_CLUSTER_NAME_1: ecs-demo-cluster-1
+  AWS_ECS_CLUSTER_NAME_2: ecs-demo-cluster-2
+  AWS_ECS_SERVICE_NAME_1: ecs-demo-service-1
+  AWS_ECS_SERVICE_NAME_2: ecs-demo-service-2
+  AWS_ECS_SERVICE_NAME_3: ecs-demo-service-3
+  AWS_ECS_TASK_DEFINITION_1: ecs-demo-task-def-1
+  AWS_ECS_TASK_DEFINITION_2: ecs-demo-task-def-2
+  AWS_ECS_TASK_DEFINITION_3: ecs-demo-task-def-3
+  AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_1: app1
+  AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_2: app2
+  AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_3: app3
+  AWS_DEFAULT_REGION: us-east-1
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  deploy-service-1:
+    name: Deploy Service 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR (sha tag)
+        id: build-deploy-image-sha
+        uses: whoan/docker-build-with-cache-action@master
+        with:
+          username: "${{ env.AWS_ACCESS_KEY_ID }}"
+          password: "${{ env.AWS_SECRET_ACCESS_KEY }}"
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          image_name: ${{ env.AWS_ECR_REPOSITORY_NAME }}
+          image_tag: ${{ env.IMAGE_TAG }}
+          push_image_and_stages: true
+
+      - name: Render task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@master
+        with:
+          task-definition: ecs-demo-task-def-1.json
+          container-name: ${{ env.AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_1 }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.AWS_ECR_REPOSITORY_NAME }}:${{ env.IMAGE_TAG }}
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@master
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.AWS_ECS_CLUSTER_NAME_1 }}/${{ env.AWS_ECS_SERVICE_NAME_1 }}
+          cluster: ${{ env.AWS_ECS_CLUSTER_NAME_1 }}
+          wait-for-service-stability: false
+
+  deploy-service-2:
+    name: Deploy Service 2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR (sha tag)
+        id: build-deploy-image-sha
+        uses: whoan/docker-build-with-cache-action@master
+        with:
+          username: "${{ env.AWS_ACCESS_KEY_ID }}"
+          password: "${{ env.AWS_SECRET_ACCESS_KEY }}"
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          image_name: ${{ env.AWS_ECR_REPOSITORY_NAME }}
+          image_tag: ${{ env.IMAGE_TAG }}
+          push_image_and_stages: true
+
+      - name: Render task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@master
+        with:
+          task-definition: ecs-demo-task-def-2.json
+          container-name: ${{ env.AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_2 }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.AWS_ECR_REPOSITORY_NAME }}:${{ env.IMAGE_TAG }}
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@master
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.AWS_ECS_CLUSTER_NAME_1 }}/${{ env.AWS_ECS_SERVICE_NAME_2 }}
+          cluster: ${{ env.AWS_ECS_CLUSTER_NAME_1 }}
+          wait-for-service-stability: false
+
+  deploy-service-3:
+    name: Deploy Service 3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR (sha tag)
+        id: build-deploy-image-sha
+        uses: whoan/docker-build-with-cache-action@master
+        with:
+          username: "${{ env.AWS_ACCESS_KEY_ID }}"
+          password: "${{ env.AWS_SECRET_ACCESS_KEY }}"
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          image_name: ${{ env.AWS_ECR_REPOSITORY_NAME }}
+          image_tag: ${{ env.IMAGE_TAG }}
+          push_image_and_stages: true
+
+      - name: Render task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@master
+        with:
+          task-definition: ecs-demo-task-def-3.json
+          container-name: ${{ env.AWS_ECS_TASK_DEFINITION_CONTAINER_NAME_3 }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.AWS_ECR_REPOSITORY_NAME }}:${{ env.IMAGE_TAG }}
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@master
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.AWS_ECS_CLUSTER_NAME_2 }}/${{ env.AWS_ECS_SERVICE_NAME_3 }}
+          cluster: ${{ env.AWS_ECS_CLUSTER_NAME_2 }}
+          wait-for-service-stability: false
